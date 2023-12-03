@@ -7,6 +7,11 @@ struct vec3
   float x, y, z;
 };
 
+struct connection
+{
+  int a, b;
+};
+
 void rotate(vec3& point, float x = 1, float y = 1, float z = 1)
 {
   float rad = 0;
@@ -58,17 +63,56 @@ int main()
           {100,200,200}
   };
 
+  std::vector<connection> connections
+  {
+    {0,4},
+    {1,5},
+    {2,6},
+    {3,7},
+
+    {0,1},
+    {1,2},
+    {2,3},
+    {3,0},
+
+    {4,5},
+    {5,6},
+    {6,7},
+    {7,4}
+  };
+
+  //Calculate centeriod
+  //
+  vec3 c{0,0,0};
+  for(auto& p : points)
+  {
+    c.x += p.x;
+    c.y += p.y;
+    c.z += p.z;  
+  }
+  c.x /= points.size();
+  c.y /= points.size();
+  c.z /= points.size();
 
   while(true)
   {
     for(auto& p : points)
     {
-      rotate(p, 0.002, 0.001, 0.004);
-    }
-
-    for(auto& p : points)
-    {
+      p.x -= c.x;
+      p.y -= c.y;
+      p.z -= c.z;
+      rotate(p, 0.02, 0.01, 0.04);
+      p.x += c.x;
+      p.y += c.y;
+      p.z += c.z;
       screen.pixel(p.x, p.y);
+    }
+    for(auto& conn : connections)
+    {
+      line(screen, points[conn.a].x,
+                   points[conn.a].y,
+                   points[conn.b].x,
+                   points[conn.b].y);
     }
     screen.show();
     screen.clear();
