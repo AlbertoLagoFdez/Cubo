@@ -7,8 +7,22 @@ struct vec3
   float x, y, z;
 };
 
-void rotate(vec3& point, )
+void rotate(vec3& point, float x = 1, float y = 1, float z = 1)
 {
+  float rad = 0;
+
+  rad = x;
+  point.y = std::cos(rad) * point.y - std::sin(rad) * point.z;
+  point.z = std::sin(rad) * point.y + std::cos(rad) * point.z;
+
+  rad = y;
+  point.x = std::cos(rad) * point.x + std::sin(rad) * point.z;
+  point.z = -std::sin(rad) * point.x + std::cos(rad) * point.z;
+
+  rad = z;
+  point.x = std::cos(rad) * point.x - std::sin(rad) * point.y;
+  point.y = std::sin(rad) * point.x + std::cos(rad) * point.y;
+
 
 }
 
@@ -32,19 +46,34 @@ int main()
 {
   Screen screen;
 
-  for(int i = 0; i < 100; i++)
-  {
-    screen.pixel(rand()%640, rand()%480);
-  }
+  std::vector<vec3> points {
+          {100,100,100},
+          {200,100,100},
+          {200,200,100},
+          {100,200,100},
 
-  line(screen, 100, 100, 200, 100);
-  line(screen, 200, 100, 200, 200);
-  line(screen, 200, 200, 100, 200);
-  line(screen, 100, 200, 100, 100);
+          {100,100,200},
+          {200,100,200},
+          {200,200,200},
+          {100,200,200}
+  };
+
 
   while(true)
   {
+    for(auto& p : points)
+    {
+      rotate(p, 0.002, 0.001, 0.004);
+    }
+
+    for(auto& p : points)
+    {
+      screen.pixel(p.x, p.y);
+    }
     screen.show();
+    screen.clear();
     screen.input();
+    SDL_Delay(30);
   }
+  return 0;
 }
